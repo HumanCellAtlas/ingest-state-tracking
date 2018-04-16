@@ -27,6 +27,8 @@ public class QueueConfig implements RabbitListenerConfigurer  {
     @Bean
     TopicExchange assayExchange() { return new TopicExchange(Constants.Exchanges.BUNDLE_EXCHANGE); }
 
+    @Bean TopicExchange uploadAreaExchange() { return new TopicExchange(Constants.Exchanges.UPLOAD_AREA_EXCHANGE); }
+
     /* queues */
 
     @Bean
