@@ -1,9 +1,14 @@
 package org.humancellatlas.ingest.state;
 
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.humancellatlas.ingest.messaging.Constants;
+import org.humancellatlas.ingest.messaging.MessageSender;
+import org.humancellatlas.ingest.messaging.model.SubmissionEnvelopeMessage;
 import org.humancellatlas.ingest.state.monitor.util.BundleTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.statemachine.StateContext;
 import org.springframework.statemachine.action.Action;
@@ -28,8 +33,13 @@ import static org.humancellatlas.ingest.state.SubmissionState.*;
  */
 @Configuration
 @EnableStateMachineFactory
+@RequiredArgsConstructor
 public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter<SubmissionState, SubmissionEvent> {
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    @NonNull
+    private final MessageSender messageSender;
 
     @Override
     public void configure(StateMachineStateConfigurer<SubmissionState, SubmissionEvent> states) throws Exception {
@@ -107,6 +117,7 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
             .withExternal()
                 .source(PROCESSING).target(CLEANUP)
                 .event(CLEANUP_STARTED)
+                .action(sendCleanupMessage())
                 .and()
             .withExternal()
                 .source(PROCESSING).target(SUBMITTED)
@@ -116,6 +127,14 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
                 .source(CLEANUP).target(COMPLETE)
                 .event(ALL_TASKS_COMPLETE);
 
+    }
+
+    private Action<SubmissionState,SubmissionEvent> sendCleanupMessage() {
+        return context -> {
+            String documentId = context.getMessageHeaders().get(DOCUMENT_ID, String.class);
+            SubmissionEnvelopeMessage newMessage = new SubmissionEnvelopeMessage(documentId, "", "", "");
+            this.messageSender.sendMessage(Constants.Exchanges.UPLOAD_AREA_EXCHANGE, Constants.RoutingKeys.UPLOAD_AREA_CLEANUP, newMessage);
+        };
     }
 
 

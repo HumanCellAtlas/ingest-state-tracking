@@ -19,6 +19,7 @@ public class Constants {
     public class Exchanges {
         public static final String STATE_TRACKING = "ingest.state-tracking.exchange";
         public static final String BUNDLE_EXCHANGE = "ingest.bundle.exchange";
+        public static final String UPLOAD_AREA_EXCHANGE = "ingest.upload.area.exchange";
     }
 
     public class RoutingKeys {
@@ -27,6 +28,7 @@ public class Constants {
         public static final String METADATA_UPDATE = "ingest.state-tracking.document.update";
         public static final String BUNDLEABLE_PROCESS_SUBMITTED_ROUTING_KEY = "ingest.bundle.*.submitted";
         public static final String BUNDLEABLE_PROCESS_COMPLETED_ROUTING_KEY = "ingest.bundle.*.completed";
+        public static final String UPLOAD_AREA_CLEANUP = "ingest.upload.area.cleanup";
     }
 
     public static final String METADATA_DOCUMENT_TRACKER = "METADATA_DOCUMENT_TRACKER";
