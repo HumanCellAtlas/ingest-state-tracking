@@ -53,7 +53,7 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
                 .state(SUBMITTED)
                 .junction(PROCESSING_STATE_EVAL_JUNCTION)
                 .state(PROCESSING)
-                .state(CLEANUP)
+                .state(CLEANUP, sendCleanupMessage())
                 .end(COMPLETE);
     }
 
@@ -117,7 +117,6 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
             .withExternal()
                 .source(PROCESSING).target(CLEANUP)
                 .event(CLEANUP_STARTED)
-                .action(sendCleanupMessage())
                 .and()
             .withExternal()
                 .source(PROCESSING).target(SUBMITTED)
@@ -134,6 +133,7 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
             String documentId = context.getMessageHeaders().get(DOCUMENT_ID, String.class);
             SubmissionEnvelopeMessage newMessage = new SubmissionEnvelopeMessage(documentId, "", "", "");
             this.messageSender.sendMessage(Constants.Exchanges.UPLOAD_AREA_EXCHANGE, Constants.RoutingKeys.UPLOAD_AREA_CLEANUP, newMessage);
+            log.info("Notified staging manager of the cleanup event");
         };
     }
 
