@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 @Getter
 @NoArgsConstructor
 public class MessageSender {
-    private @Autowired
-    @NonNull
-    RabbitMessagingTemplate rabbitMessagingTemplate;
+    private @Autowired @NonNull RabbitMessagingTemplate rabbitMessagingTemplate;
 
     public void sendMessage(String exchange, String routingKey, SubmissionEnvelopeMessage payload){
         this.rabbitMessagingTemplate.convertAndSend(exchange, routingKey, payload);

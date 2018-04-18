@@ -131,7 +131,8 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
     private Action<SubmissionState,SubmissionEvent> sendCleanupMessage() {
         return context -> {
             String documentId = context.getMessageHeaders().get(DOCUMENT_ID, String.class);
-            SubmissionEnvelopeMessage newMessage = new SubmissionEnvelopeMessage(documentId, "", "", "");
+            String envelopeUuid = context.getMessageHeaders().get(ENVELOPE_UUID, String.class);
+            SubmissionEnvelopeMessage newMessage = new SubmissionEnvelopeMessage(documentId, envelopeUuid, "", "");
             this.messageSender.sendMessage(Constants.Exchanges.UPLOAD_AREA_EXCHANGE, Constants.RoutingKeys.UPLOAD_AREA_CLEANUP, newMessage);
             log.info("Notified staging manager of the cleanup event");
         };
