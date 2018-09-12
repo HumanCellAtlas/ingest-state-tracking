@@ -229,9 +229,14 @@ public class StateMachineConfiguration extends EnumStateMachineConfigurerAdapter
 
             if(! documentState.equals(MetadataDocumentState.VALID)) {
                 metadataDocumentTracker.put(documentId, documentState);
+                log.debug("metadataDocumentTracker:");
+                for (Map.Entry<String, MetadataDocumentState> entry : metadataDocumentTracker.entrySet()) {
+                    log.debug(String.format("%s : %s",entry.getKey(), entry.getValue().toString()));
+                }
             } else {
                 if ( metadataDocumentTracker.containsKey(documentId)){
                     metadataDocumentTracker.remove(documentId);
+                    log.debug(String.format("Removing %s in metadataDocumentTracker", documentId));
                 }
             }
         };
