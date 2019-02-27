@@ -148,7 +148,7 @@ public class MessageHandler {
         final int numWorkerThreads;
         final List<ExecutorService> workers;
 
-        Workers(int numWorkerThreads){
+        Workers(int numWorkerThreads) {
             this.numWorkerThreads = numWorkerThreads;
             this.workers = IntStream.range(0,numWorkerThreads)
                                     .mapToObj(x -> Executors.newSingleThreadExecutor())
@@ -162,8 +162,7 @@ public class MessageHandler {
         }
 
         int workerIndexForResourceId(String resourceId, int numWorkers) {
-            BigInteger resourceValue = new BigInteger(resourceId, 16); // assuming resource is hex
-            return resourceValue.mod(BigInteger.valueOf(numWorkers)).intValue();
+            return resourceId.hashCode() % numWorkers;
         }
     }
 
